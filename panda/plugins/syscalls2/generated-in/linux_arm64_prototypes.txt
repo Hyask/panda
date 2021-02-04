@@ -17,6 +17,9 @@
 16 long sys_fremovexattr(int fd, const char __user *name);
 17 long sys_getcwd(char __user *buf, unsigned long size);
 18 long sys_lookup_dcookie(u64 cookie64, char __user *buf, size_t len);
+19 long sys_eventfd2(unsigned int count, int flags);
+
+// Here down -> bad ordinals!
 19 long sys_epoll_ctl(int epfd, int op, int fd, struct epoll_event __user *event);
 20 long sys_epoll_pwait(int epfd, struct epoll_event __user *events, int maxevents, int timeout, const sigset_t __user *sigmask, size_t sigsetsize);
 21 long sys_dup(unsigned int fildes);
