@@ -268,7 +268,7 @@
 282 long sys_userfaultfd(int flags);
 283 long sys_membarrier(int cmd, int flags);
 284 long sys_mlock2(unsigned long start, size_t len, int flags);
-284 long sys_copy_file_range(int fd_in, loff_t __user *off_in, int fd_out, loff_t __user *off_out, size_t len, unsigned int flags);
+285 long sys_copy_file_range(int fd_in, loff_t __user *off_in, int fd_out, loff_t __user *off_out, size_t len, unsigned int flags);
 286 long sys_preadv2(unsigned long fd, const struct iovec *vec, unsigned long vlen, unsigned long pos_l, unsigned long pos_h, rwf_t flags);
 287 long sys_pwritev2(unsigned long fd, const struct iovec *vec, unsigned long vlen, unsigned long pos_l, unsigned long pos_h, rwf_t flags);
 288 long sys_pkey_mprotect(unsigned long start, size_t len, unsigned long prot, int pkey);
