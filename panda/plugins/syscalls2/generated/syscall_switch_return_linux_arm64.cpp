@@ -3250,6 +3250,96 @@ void syscall_return_switch_linux_arm64(CPUState *cpu, target_ptr_t pc, const sys
 			}
 			PPP_RUN_CB(on_sys_statx_return, cpu, pc, arg0, arg1, arg2, arg3, arg4) ;
 		}; break;
+		// 294 long sys_kexec_file_load ['int kernel_fd', 'int initrd_fd', 'unsigned long cmdline_len', 'const char *cmdline', 'unsigned long flags']
+		case 294: {
+			int32_t arg0;
+			int32_t arg1;
+			uint64_t arg2;
+			uint64_t arg3;
+			uint64_t arg4;
+			if (PPP_CHECK_CB(on_sys_kexec_file_load_return) || PPP_CHECK_CB(on_all_sys_return2)) {
+				memcpy(&arg0, ctx->args[0], sizeof(int32_t));
+				memcpy(&arg1, ctx->args[1], sizeof(int32_t));
+				memcpy(&arg2, ctx->args[2], sizeof(uint64_t));
+				memcpy(&arg3, ctx->args[3], sizeof(uint64_t));
+				memcpy(&arg4, ctx->args[4], sizeof(uint64_t));
+			}
+			PPP_RUN_CB(on_sys_kexec_file_load_return, cpu, pc, arg0, arg1, arg2, arg3, arg4) ;
+		}; break;
+		// 424 long sys_pidfd_send_signal ['int pidfd', 'int sig', 'siginfo_t *info', 'unsigned int flags']
+		case 424: {
+			int32_t arg0;
+			int32_t arg1;
+			uint64_t arg2;
+			uint32_t arg3;
+			if (PPP_CHECK_CB(on_sys_pidfd_send_signal_return) || PPP_CHECK_CB(on_all_sys_return2)) {
+				memcpy(&arg0, ctx->args[0], sizeof(int32_t));
+				memcpy(&arg1, ctx->args[1], sizeof(int32_t));
+				memcpy(&arg2, ctx->args[2], sizeof(uint64_t));
+				memcpy(&arg3, ctx->args[3], sizeof(uint32_t));
+			}
+			PPP_RUN_CB(on_sys_pidfd_send_signal_return, cpu, pc, arg0, arg1, arg2, arg3) ;
+		}; break;
+		// 434 long sys_pidfd_open ['pid_t pid', 'unsigned int flags']
+		case 434: {
+			int32_t arg0;
+			uint32_t arg1;
+			if (PPP_CHECK_CB(on_sys_pidfd_open_return) || PPP_CHECK_CB(on_all_sys_return2)) {
+				memcpy(&arg0, ctx->args[0], sizeof(int32_t));
+				memcpy(&arg1, ctx->args[1], sizeof(uint32_t));
+			}
+			PPP_RUN_CB(on_sys_pidfd_open_return, cpu, pc, arg0, arg1) ;
+		}; break;
+		// 435 long sys_clone3 ['struct clone_args *cl_args', 'size_t size']
+		case 435: {
+			uint64_t arg0;
+			uint32_t arg1;
+			if (PPP_CHECK_CB(on_sys_clone3_return) || PPP_CHECK_CB(on_all_sys_return2)) {
+				memcpy(&arg0, ctx->args[0], sizeof(uint64_t));
+				memcpy(&arg1, ctx->args[1], sizeof(uint32_t));
+			}
+			PPP_RUN_CB(on_sys_clone3_return, cpu, pc, arg0, arg1) ;
+		}; break;
+		// 437 long sys_openat2 ['int dirfd', 'const char *pathname', 'struct open_how *how', 'size_t size']
+		case 437: {
+			int32_t arg0;
+			uint64_t arg1;
+			uint64_t arg2;
+			uint32_t arg3;
+			if (PPP_CHECK_CB(on_sys_openat2_return) || PPP_CHECK_CB(on_all_sys_return2)) {
+				memcpy(&arg0, ctx->args[0], sizeof(int32_t));
+				memcpy(&arg1, ctx->args[1], sizeof(uint64_t));
+				memcpy(&arg2, ctx->args[2], sizeof(uint64_t));
+				memcpy(&arg3, ctx->args[3], sizeof(uint32_t));
+			}
+			PPP_RUN_CB(on_sys_openat2_return, cpu, pc, arg0, arg1, arg2, arg3) ;
+		}; break;
+		// 438 long sys_pidfd_getfd ['int pidfd', 'int targetfd', 'unsigned int flags']
+		case 438: {
+			int32_t arg0;
+			int32_t arg1;
+			uint32_t arg2;
+			if (PPP_CHECK_CB(on_sys_pidfd_getfd_return) || PPP_CHECK_CB(on_all_sys_return2)) {
+				memcpy(&arg0, ctx->args[0], sizeof(int32_t));
+				memcpy(&arg1, ctx->args[1], sizeof(int32_t));
+				memcpy(&arg2, ctx->args[2], sizeof(uint32_t));
+			}
+			PPP_RUN_CB(on_sys_pidfd_getfd_return, cpu, pc, arg0, arg1, arg2) ;
+		}; break;
+		// 439 long sys_faccessat2 ['int dirfd', 'const char *pathname', 'int mode', 'int flags']
+		case 439: {
+			int32_t arg0;
+			uint64_t arg1;
+			int32_t arg2;
+			int32_t arg3;
+			if (PPP_CHECK_CB(on_sys_faccessat2_return) || PPP_CHECK_CB(on_all_sys_return2)) {
+				memcpy(&arg0, ctx->args[0], sizeof(int32_t));
+				memcpy(&arg1, ctx->args[1], sizeof(uint64_t));
+				memcpy(&arg2, ctx->args[2], sizeof(int32_t));
+				memcpy(&arg3, ctx->args[3], sizeof(int32_t));
+			}
+			PPP_RUN_CB(on_sys_faccessat2_return, cpu, pc, arg0, arg1, arg2, arg3) ;
+		}; break;
 		default:
 			PPP_RUN_CB(on_unknown_sys_return, cpu, pc, ctx->no);
 	}

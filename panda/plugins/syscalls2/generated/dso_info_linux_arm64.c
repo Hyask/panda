@@ -1,8 +1,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "../syscalls2_info.h"
-#define MAX_SYSCALL_NO 291
-#define MAX_SYSCALL_GENERIC_NO 291
+#define MAX_SYSCALL_NO 439
+#define MAX_SYSCALL_GENERIC_NO 439
 #define MAX_SYSCALL_ARGS 6
 
 #if !defined(__clang__) && __GNUC__ < 5
@@ -1122,6 +1122,34 @@ static syscall_argtype_t argt_291[] = {SYSCALL_ARG_S32, SYSCALL_ARG_STR_PTR, SYS
 static uint8_t argsz_291[] = {sizeof(int32_t), sizeof(uint64_t), sizeof(uint32_t), sizeof(uint32_t), sizeof(uint64_t)};
 static const char* const argn_291[] = {"dfd", "path", "flags", "mask", "buffer", 0};
 static const char* const argtn_291[] = {"n/a", "n/a", "n/a", "n/a", "statx", 0};
+static syscall_argtype_t argt_294[] = {SYSCALL_ARG_S32, SYSCALL_ARG_S32, SYSCALL_ARG_U64, SYSCALL_ARG_STR_PTR, SYSCALL_ARG_U64};
+static uint8_t argsz_294[] = {sizeof(int32_t), sizeof(int32_t), sizeof(uint64_t), sizeof(uint64_t), sizeof(uint64_t)};
+static const char* const argn_294[] = {"kernel_fd", "initrd_fd", "cmdline_len", "cmdline", "flags", 0};
+static const char* const argtn_294[] = {"n/a", "n/a", "n/a", "n/a", "n/a", 0};
+static syscall_argtype_t argt_424[] = {SYSCALL_ARG_S32, SYSCALL_ARG_S32, SYSCALL_ARG_STRUCT_PTR, SYSCALL_ARG_U32};
+static uint8_t argsz_424[] = {sizeof(int32_t), sizeof(int32_t), sizeof(uint64_t), sizeof(uint32_t)};
+static const char* const argn_424[] = {"pidfd", "sig", "info", "flags", 0};
+static const char* const argtn_424[] = {"n/a", "n/a", "siginfo_t", "n/a", 0};
+static syscall_argtype_t argt_434[] = {SYSCALL_ARG_S32, SYSCALL_ARG_U32};
+static uint8_t argsz_434[] = {sizeof(int32_t), sizeof(uint32_t)};
+static const char* const argn_434[] = {"pid", "flags", 0};
+static const char* const argtn_434[] = {"n/a", "n/a", 0};
+static syscall_argtype_t argt_435[] = {SYSCALL_ARG_STRUCT_PTR, SYSCALL_ARG_U32};
+static uint8_t argsz_435[] = {sizeof(uint64_t), sizeof(uint32_t)};
+static const char* const argn_435[] = {"cl_args", "size", 0};
+static const char* const argtn_435[] = {"clone_args", "n/a", 0};
+static syscall_argtype_t argt_437[] = {SYSCALL_ARG_S32, SYSCALL_ARG_STR_PTR, SYSCALL_ARG_STRUCT_PTR, SYSCALL_ARG_U32};
+static uint8_t argsz_437[] = {sizeof(int32_t), sizeof(uint64_t), sizeof(uint64_t), sizeof(uint32_t)};
+static const char* const argn_437[] = {"dirfd", "pathname", "how", "size", 0};
+static const char* const argtn_437[] = {"n/a", "n/a", "open_how", "n/a", 0};
+static syscall_argtype_t argt_438[] = {SYSCALL_ARG_S32, SYSCALL_ARG_S32, SYSCALL_ARG_U32};
+static uint8_t argsz_438[] = {sizeof(int32_t), sizeof(int32_t), sizeof(uint32_t)};
+static const char* const argn_438[] = {"pidfd", "targetfd", "flags", 0};
+static const char* const argtn_438[] = {"n/a", "n/a", "n/a", 0};
+static syscall_argtype_t argt_439[] = {SYSCALL_ARG_S32, SYSCALL_ARG_STR_PTR, SYSCALL_ARG_S32, SYSCALL_ARG_S32};
+static uint8_t argsz_439[] = {sizeof(int32_t), sizeof(uint64_t), sizeof(int32_t), sizeof(int32_t)};
+static const char* const argn_439[] = {"dirfd", "pathname", "mode", "flags", 0};
+static const char* const argtn_439[] = {"n/a", "n/a", "n/a", "n/a", 0};
 
 
 syscall_info_t __syscall_info_a[] = {
@@ -3884,6 +3912,76 @@ syscall_info_t __syscall_info_a[] = {
 		.argsz = argsz_291,
 		.argn = argn_291,
 		.argtn = argtn_291,
+		.noreturn = false
+	},
+	[294] = {
+		.no = 294,
+		.name = "sys_kexec_file_load",
+		.nargs = 5,
+		.argt = argt_294,
+		.argsz = argsz_294,
+		.argn = argn_294,
+		.argtn = argtn_294,
+		.noreturn = false
+	},
+	[424] = {
+		.no = 424,
+		.name = "sys_pidfd_send_signal",
+		.nargs = 4,
+		.argt = argt_424,
+		.argsz = argsz_424,
+		.argn = argn_424,
+		.argtn = argtn_424,
+		.noreturn = false
+	},
+	[434] = {
+		.no = 434,
+		.name = "sys_pidfd_open",
+		.nargs = 2,
+		.argt = argt_434,
+		.argsz = argsz_434,
+		.argn = argn_434,
+		.argtn = argtn_434,
+		.noreturn = false
+	},
+	[435] = {
+		.no = 435,
+		.name = "sys_clone3",
+		.nargs = 2,
+		.argt = argt_435,
+		.argsz = argsz_435,
+		.argn = argn_435,
+		.argtn = argtn_435,
+		.noreturn = false
+	},
+	[437] = {
+		.no = 437,
+		.name = "sys_openat2",
+		.nargs = 4,
+		.argt = argt_437,
+		.argsz = argsz_437,
+		.argn = argn_437,
+		.argtn = argtn_437,
+		.noreturn = false
+	},
+	[438] = {
+		.no = 438,
+		.name = "sys_pidfd_getfd",
+		.nargs = 3,
+		.argt = argt_438,
+		.argsz = argsz_438,
+		.argn = argn_438,
+		.argtn = argtn_438,
+		.noreturn = false
+	},
+	[439] = {
+		.no = 439,
+		.name = "sys_faccessat2",
+		.nargs = 4,
+		.argt = argt_439,
+		.argsz = argsz_439,
+		.argn = argn_439,
+		.argtn = argtn_439,
 		.noreturn = false
 	},
 	

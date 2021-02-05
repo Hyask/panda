@@ -277,9 +277,9 @@
 291 long sys_statx(int dfd, const char *path, unsigned flags, unsigned mask, struct statx *buffer);
 // TODO: 292 long sys_io_pgetevents_time64
 // TODO: 293 long sys_rseq
-// TODO: 294 long sys_kexec_file_load
+294 long sys_kexec_file_load (int kernel_fd, int initrd_fd, unsigned long cmdline_len, const char *cmdline, unsigned long flags);
 // 295-423: no uses on AArch64
-// TODO: 424 long sys_pidfd_send_signal
+424 long sys_pidfd_send_signal(int pidfd, int sig, siginfo_t *info, unsigned int flags);
 // TODO: 425 long sys_io_uring_setup
 // TODO: 426 long sys_io_uring_enter
 // TODO: 427 long sys_io_uring_register
@@ -289,11 +289,11 @@
 // TODO: 431 long sys_fsconfig
 // TODO: 432 long sys_fsmount
 // TODO: 433 long sys_fspick
-// TODO: 434 long sys_pidfd_open
-// TODO: 435 long sys_clone3
+434 long sys_pidfd_open(pid_t pid, unsigned int flags);
+435 long sys_clone3(struct clone_args *cl_args, size_t size);
 // TODO: 436 long sys_close_range
-// TODO: 437 long sys_openat2
-// TODO: 438 long sys_pidfd_getfd
-// TODO: 439 long sys_faccessat2
+437 long sys_openat2(int dirfd, const char *pathname, struct open_how *how, size_t size);
+438 long sys_pidfd_getfd(int pidfd, int targetfd, unsigned int flags);
+439 long sys_faccessat2(int dirfd, const char *pathname, int mode, int flags);
 // TODO: 440 long sys_process_madvise
 // TODO: 441 long sys_epoll_pwait2

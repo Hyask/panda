@@ -9573,6 +9573,127 @@
 	const uint64_t &UNUSED(pref##buffer) = *reinterpret_cast<const uint64_t *>((ctx)->args[4]);
 #endif
 
+// long sys_kexec_file_load ['int kernel_fd', 'int initrd_fd', 'unsigned long cmdline_len', 'const char *cmdline', 'unsigned long flags']
+#define locals_LINUX__ARM64_sys_kexec_file_load(ctx, pref) \
+	int32_t UNUSED(pref##kernel_fd) = *(int32_t *)((ctx)->args[0]); \
+	int32_t UNUSED(pref##initrd_fd) = *(int32_t *)((ctx)->args[1]); \
+	uint64_t UNUSED(pref##cmdline_len) = *(uint64_t *)((ctx)->args[2]); \
+	uint64_t UNUSED(pref##cmdline) = *(uint64_t *)((ctx)->args[3]); \
+	uint64_t UNUSED(pref##flags) = *(uint64_t *)((ctx)->args[4]);
+#if defined(__cplusplus)
+#define references_LINUX__ARM64_sys_kexec_file_load(ctx, pref) \
+	int32_t &UNUSED(pref##kernel_fd) = *reinterpret_cast<int32_t *>((ctx)->args[0]); \
+	int32_t &UNUSED(pref##initrd_fd) = *reinterpret_cast<int32_t *>((ctx)->args[1]); \
+	uint64_t &UNUSED(pref##cmdline_len) = *reinterpret_cast<uint64_t *>((ctx)->args[2]); \
+	uint64_t &UNUSED(pref##cmdline) = *reinterpret_cast<uint64_t *>((ctx)->args[3]); \
+	uint64_t &UNUSED(pref##flags) = *reinterpret_cast<uint64_t *>((ctx)->args[4]);
+#define creferences_LINUX__ARM64_sys_kexec_file_load(ctx, pref) \
+	const int32_t &UNUSED(pref##kernel_fd) = *reinterpret_cast<const int32_t *>((ctx)->args[0]); \
+	const int32_t &UNUSED(pref##initrd_fd) = *reinterpret_cast<const int32_t *>((ctx)->args[1]); \
+	const uint64_t &UNUSED(pref##cmdline_len) = *reinterpret_cast<const uint64_t *>((ctx)->args[2]); \
+	const uint64_t &UNUSED(pref##cmdline) = *reinterpret_cast<const uint64_t *>((ctx)->args[3]); \
+	const uint64_t &UNUSED(pref##flags) = *reinterpret_cast<const uint64_t *>((ctx)->args[4]);
+#endif
+
+// long sys_pidfd_send_signal ['int pidfd', 'int sig', 'siginfo_t *info', 'unsigned int flags']
+#define locals_LINUX__ARM64_sys_pidfd_send_signal(ctx, pref) \
+	int32_t UNUSED(pref##pidfd) = *(int32_t *)((ctx)->args[0]); \
+	int32_t UNUSED(pref##sig) = *(int32_t *)((ctx)->args[1]); \
+	uint64_t UNUSED(pref##info) = *(uint64_t *)((ctx)->args[2]); \
+	uint32_t UNUSED(pref##flags) = *(uint32_t *)((ctx)->args[3]);
+#if defined(__cplusplus)
+#define references_LINUX__ARM64_sys_pidfd_send_signal(ctx, pref) \
+	int32_t &UNUSED(pref##pidfd) = *reinterpret_cast<int32_t *>((ctx)->args[0]); \
+	int32_t &UNUSED(pref##sig) = *reinterpret_cast<int32_t *>((ctx)->args[1]); \
+	uint64_t &UNUSED(pref##info) = *reinterpret_cast<uint64_t *>((ctx)->args[2]); \
+	uint32_t &UNUSED(pref##flags) = *reinterpret_cast<uint32_t *>((ctx)->args[3]);
+#define creferences_LINUX__ARM64_sys_pidfd_send_signal(ctx, pref) \
+	const int32_t &UNUSED(pref##pidfd) = *reinterpret_cast<const int32_t *>((ctx)->args[0]); \
+	const int32_t &UNUSED(pref##sig) = *reinterpret_cast<const int32_t *>((ctx)->args[1]); \
+	const uint64_t &UNUSED(pref##info) = *reinterpret_cast<const uint64_t *>((ctx)->args[2]); \
+	const uint32_t &UNUSED(pref##flags) = *reinterpret_cast<const uint32_t *>((ctx)->args[3]);
+#endif
+
+// long sys_pidfd_open ['pid_t pid', 'unsigned int flags']
+#define locals_LINUX__ARM64_sys_pidfd_open(ctx, pref) \
+	int32_t UNUSED(pref##pid) = *(int32_t *)((ctx)->args[0]); \
+	uint32_t UNUSED(pref##flags) = *(uint32_t *)((ctx)->args[1]);
+#if defined(__cplusplus)
+#define references_LINUX__ARM64_sys_pidfd_open(ctx, pref) \
+	int32_t &UNUSED(pref##pid) = *reinterpret_cast<int32_t *>((ctx)->args[0]); \
+	uint32_t &UNUSED(pref##flags) = *reinterpret_cast<uint32_t *>((ctx)->args[1]);
+#define creferences_LINUX__ARM64_sys_pidfd_open(ctx, pref) \
+	const int32_t &UNUSED(pref##pid) = *reinterpret_cast<const int32_t *>((ctx)->args[0]); \
+	const uint32_t &UNUSED(pref##flags) = *reinterpret_cast<const uint32_t *>((ctx)->args[1]);
+#endif
+
+// long sys_clone3 ['struct clone_args *cl_args', 'size_t size']
+#define locals_LINUX__ARM64_sys_clone3(ctx, pref) \
+	uint64_t UNUSED(pref##cl_args) = *(uint64_t *)((ctx)->args[0]); \
+	uint32_t UNUSED(pref##size) = *(uint32_t *)((ctx)->args[1]);
+#if defined(__cplusplus)
+#define references_LINUX__ARM64_sys_clone3(ctx, pref) \
+	uint64_t &UNUSED(pref##cl_args) = *reinterpret_cast<uint64_t *>((ctx)->args[0]); \
+	uint32_t &UNUSED(pref##size) = *reinterpret_cast<uint32_t *>((ctx)->args[1]);
+#define creferences_LINUX__ARM64_sys_clone3(ctx, pref) \
+	const uint64_t &UNUSED(pref##cl_args) = *reinterpret_cast<const uint64_t *>((ctx)->args[0]); \
+	const uint32_t &UNUSED(pref##size) = *reinterpret_cast<const uint32_t *>((ctx)->args[1]);
+#endif
+
+// long sys_openat2 ['int dirfd', 'const char *pathname', 'struct open_how *how', 'size_t size']
+#define locals_LINUX__ARM64_sys_openat2(ctx, pref) \
+	int32_t UNUSED(pref##dirfd) = *(int32_t *)((ctx)->args[0]); \
+	uint64_t UNUSED(pref##pathname) = *(uint64_t *)((ctx)->args[1]); \
+	uint64_t UNUSED(pref##how) = *(uint64_t *)((ctx)->args[2]); \
+	uint32_t UNUSED(pref##size) = *(uint32_t *)((ctx)->args[3]);
+#if defined(__cplusplus)
+#define references_LINUX__ARM64_sys_openat2(ctx, pref) \
+	int32_t &UNUSED(pref##dirfd) = *reinterpret_cast<int32_t *>((ctx)->args[0]); \
+	uint64_t &UNUSED(pref##pathname) = *reinterpret_cast<uint64_t *>((ctx)->args[1]); \
+	uint64_t &UNUSED(pref##how) = *reinterpret_cast<uint64_t *>((ctx)->args[2]); \
+	uint32_t &UNUSED(pref##size) = *reinterpret_cast<uint32_t *>((ctx)->args[3]);
+#define creferences_LINUX__ARM64_sys_openat2(ctx, pref) \
+	const int32_t &UNUSED(pref##dirfd) = *reinterpret_cast<const int32_t *>((ctx)->args[0]); \
+	const uint64_t &UNUSED(pref##pathname) = *reinterpret_cast<const uint64_t *>((ctx)->args[1]); \
+	const uint64_t &UNUSED(pref##how) = *reinterpret_cast<const uint64_t *>((ctx)->args[2]); \
+	const uint32_t &UNUSED(pref##size) = *reinterpret_cast<const uint32_t *>((ctx)->args[3]);
+#endif
+
+// long sys_pidfd_getfd ['int pidfd', 'int targetfd', 'unsigned int flags']
+#define locals_LINUX__ARM64_sys_pidfd_getfd(ctx, pref) \
+	int32_t UNUSED(pref##pidfd) = *(int32_t *)((ctx)->args[0]); \
+	int32_t UNUSED(pref##targetfd) = *(int32_t *)((ctx)->args[1]); \
+	uint32_t UNUSED(pref##flags) = *(uint32_t *)((ctx)->args[2]);
+#if defined(__cplusplus)
+#define references_LINUX__ARM64_sys_pidfd_getfd(ctx, pref) \
+	int32_t &UNUSED(pref##pidfd) = *reinterpret_cast<int32_t *>((ctx)->args[0]); \
+	int32_t &UNUSED(pref##targetfd) = *reinterpret_cast<int32_t *>((ctx)->args[1]); \
+	uint32_t &UNUSED(pref##flags) = *reinterpret_cast<uint32_t *>((ctx)->args[2]);
+#define creferences_LINUX__ARM64_sys_pidfd_getfd(ctx, pref) \
+	const int32_t &UNUSED(pref##pidfd) = *reinterpret_cast<const int32_t *>((ctx)->args[0]); \
+	const int32_t &UNUSED(pref##targetfd) = *reinterpret_cast<const int32_t *>((ctx)->args[1]); \
+	const uint32_t &UNUSED(pref##flags) = *reinterpret_cast<const uint32_t *>((ctx)->args[2]);
+#endif
+
+// long sys_faccessat2 ['int dirfd', 'const char *pathname', 'int mode', 'int flags']
+#define locals_LINUX__ARM64_sys_faccessat2(ctx, pref) \
+	int32_t UNUSED(pref##dirfd) = *(int32_t *)((ctx)->args[0]); \
+	uint64_t UNUSED(pref##pathname) = *(uint64_t *)((ctx)->args[1]); \
+	int32_t UNUSED(pref##mode) = *(int32_t *)((ctx)->args[2]); \
+	int32_t UNUSED(pref##flags) = *(int32_t *)((ctx)->args[3]);
+#if defined(__cplusplus)
+#define references_LINUX__ARM64_sys_faccessat2(ctx, pref) \
+	int32_t &UNUSED(pref##dirfd) = *reinterpret_cast<int32_t *>((ctx)->args[0]); \
+	uint64_t &UNUSED(pref##pathname) = *reinterpret_cast<uint64_t *>((ctx)->args[1]); \
+	int32_t &UNUSED(pref##mode) = *reinterpret_cast<int32_t *>((ctx)->args[2]); \
+	int32_t &UNUSED(pref##flags) = *reinterpret_cast<int32_t *>((ctx)->args[3]);
+#define creferences_LINUX__ARM64_sys_faccessat2(ctx, pref) \
+	const int32_t &UNUSED(pref##dirfd) = *reinterpret_cast<const int32_t *>((ctx)->args[0]); \
+	const uint64_t &UNUSED(pref##pathname) = *reinterpret_cast<const uint64_t *>((ctx)->args[1]); \
+	const int32_t &UNUSED(pref##mode) = *reinterpret_cast<const int32_t *>((ctx)->args[2]); \
+	const int32_t &UNUSED(pref##flags) = *reinterpret_cast<const int32_t *>((ctx)->args[3]);
+#endif
+
 
 /* ### linux:x86 ######################################################## */
 // long sys_restart_syscall ['void']

@@ -648,6 +648,13 @@ namespace syscalls2 {
 			const int sys_pkey_alloc = 289;
 			const int sys_pkey_free = 290;
 			const int sys_statx = 291;
+			const int sys_kexec_file_load = 294;
+			const int sys_pidfd_send_signal = 424;
+			const int sys_pidfd_open = 434;
+			const int sys_clone3 = 435;
+			const int sys_openat2 = 437;
+			const int sys_pidfd_getfd = 438;
+			const int sys_faccessat2 = 439;
 		}
 	}
 	// linux:x86
