@@ -33,11 +33,11 @@ void before_block_exec_ratio(CPUState *env, TranslationBlock *tb);
 void before_block_exec_time(CPUState *env, TranslationBlock *tb);
 
 float avg_exec_time() {
-    uint64_t sum_ms = 0; // Average tenth-microseconds per block for last FIFO_SIZE
+    uint64_t sum_ms = 0; // Average microseconds per block for last FIFO_SIZE
     for (int i=0; i < FIFO_SIZE; i++) {
-        sum_ms += rel_time[i]*10;
+        sum_ms += rel_time[i];
     }
-    return sum_ms/FIFO_SIZE; // AVG time per block
+    return (float)sum_ms/FIFO_SIZE; // AVG time per block
 }
 
 void before_block_exec_time(CPUState *env, TranslationBlock *tb) {
@@ -62,7 +62,7 @@ void before_block_exec_time(CPUState *env, TranslationBlock *tb) {
 
       // Log ever FIFO_SIZE/4 events once we fill queue
       if ((bb_count % (FIFO_SIZE/4)) == 0 && bb_count > FIFO_SIZE) {
-          printf("[SPEEDTEST] Average bock took %.3f tenth-microseconds to execute (over the last %d blocks)\n", avg_exec_time(), FIFO_SIZE);
+          printf("[SPEEDTEST] Average bock took %.3f microseconds to execute (over the last %d blocks)\n", avg_exec_time(), FIFO_SIZE);
       }
     }
     bb_count++;
