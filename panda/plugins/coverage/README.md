@@ -81,6 +81,7 @@ instrumentation time.
 <Start PC in Hex or Decimal>-<End PC in Hex or Decimal>.
 * `privilege` - Filter option, only instrument blocks executed with the
 specified privileges. Either: `user` or `kernel`.
+* `api_mode` - When `true`, does not configure any other settings with CLI arguments (default: `false`)
 
 Monitor Commands
 ------------
@@ -94,7 +95,30 @@ osi (if `mode` is `osi-block`)
 
 APIs and Callbacks
 ------------------
-None
+A simple API is provided for other plugins to enable coverage collection and dump it to disk.
+If you wish to use the API, you can load the plugin with the argument `api_mode` and not need to specify other arguments.
+```
+bool coverage_configure(const char* filename, const char* mode, bool log_all_records,
+            bool start_disabled, const char* process_name, bool pc_filter,
+            target_ulong start_pc, target_ulong end_pc, const char* privilege);
+```
+Configure coverage collection. Parameters correspond to the plugin arguments documented
+above. If and only if `pc_filter` is `true`, the `start_pc` and `end_pc` values will be used for filtering.
+
+```
+bool coverage_reset();
+```
+Stop and delete current coverage collection.
+
+```
+bool enable_instrumentation(const char *filename);
+```
+Enable coverage collection (e.g., if `start_disabled` was set), logging to `filename`.
+
+```
+bool disable_instrumentation(void);
+```
+Disable coverage collection and flush results to disk.
 
 Example
 -------

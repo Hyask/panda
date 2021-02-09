@@ -21,6 +21,10 @@ PANDAENDCOMMENT */
 #include "osi/osi_types.h"
 #include "osi/osi_ext.h"
 
+extern "C" {
+#include "coverage_int_fns.h"
+}
+
 #include "PredicateBuilder.h"
 
 #include "Block.h"
@@ -50,15 +54,15 @@ const std::string MONITOR_DISABLE = "coverage_disable";
 // These need to be extern "C" so that the ABI is compatible with
 // QEMU/PANDA, which is written in C
 extern "C" {
-
 bool init_plugin(void *);
 void uninit_plugin(void *);
-
 }
 
 static std::unique_ptr<Predicate> predicate;
 
 static std::unique_ptr<InstrumentationDelegate> inst_del;
+
+static std::vector<CoverageMonitorDelegate *> monitor_delegates;
 
 /**
  * Logs a message to stdout.
@@ -75,136 +79,79 @@ static void log_message(const char *fmt, ...)
     va_end(arglist);
 }
 
-static void after_loadvm(CPUState *cpu)
-{
-    notify_task_change_observers(cpu);
-}
-
-static void before_tcg_codegen(CPUState *cpu, TranslationBlock *tb)
-{
-    // Determine if we should instrument.
-    if (nullptr == inst_del || !predicate->eval(cpu, tb)) {
-        return;
-    }
-    // Instrument!
-    inst_del->instrument(cpu, tb);
-}
-
-static std::vector<CoverageMonitorDelegate *> monitor_delegates;
-
-int monitor_callback(Monitor *mon, const char *cmd_cstr)
-{
-    std::string cmd = cmd_cstr;
-    if (0 == cmd.find(MONITOR_DISABLE)) {
-        log_message("Disabling instrumentation.");
-        for (auto del : monitor_delegates) {
-            try {
-                del->handle_disable();
-            } catch (std::system_error& err) {
-                std::cerr << "Error disabling instrumentation: " << err.code().message() << "\n";
-            }
-        }
-    } else if (0 == cmd.find(MONITOR_ENABLE)) {
-        auto index = cmd.find("=");
-        std::string filename = DEFAULT_FILE;
-        if (std::string::npos != index) {
-            filename = cmd.substr(index+1);
-            log_message("Enabling instrumentation with filename: %s",
-                filename.c_str());
-        } else {
-            log_message("Enabling instrumentation with default filename: %s",
-                filename.c_str());
-        }
-        for (auto del : monitor_delegates) {
-            try {
-                del->handle_enable(filename);
-            } catch (std::system_error& err) {
-                std::cerr << "Error enabling instrumentation: " << err.code().message() << "\n";
-            }
-        }
-    }
-    return 0;
-}
-
-bool init_plugin(void *self)
-{
-    PredicateBuilder pb;
-
-    std::unique_ptr<panda_arg_list, void(*)(panda_arg_list*)> args(
-        panda_get_args("coverage"), panda_free_args);
-
-    // Parse PC range argument.
-    std::string pc_arg = panda_parse_string_opt(args.get(), "pc", "",
-        "program counter range");
-    if ("" != pc_arg) {
-        auto dash_idx = pc_arg.find("-");
-        if (std::string::npos == dash_idx) {
-            log_message("Could not parse \"pc\" argument. Format: <Start PC>-<End PC>");
-            return false;
-        }
+// API START
+extern "C" {
+bool enable_instrumentation(const char *filename) {
+    bool success = true;
+    for (auto del : monitor_delegates) {
         try {
-            auto start_pc = try_parse<target_ulong>(pc_arg.substr(0, dash_idx));
-            auto end_pc = try_parse<target_ulong>(pc_arg.substr(dash_idx + 1));
-            if (end_pc < start_pc) {
-                log_message("End PC must be smaller than Start PC.");
-                return false;
-            }
-            log_message("PC Range Filter = [" TARGET_FMT_lx ", " TARGET_FMT_lx "]", start_pc, end_pc);
-            pb.with_pc_range(start_pc, end_pc);
-        } catch (std::invalid_argument& e) {
-            log_message("Could not parse PC Range argument: %s", pc_arg.c_str());
-            return false;
-        } catch (std::overflow_error& e) {
-            log_message("PC range outside of valid address space for target.");
-            return false;
+            del->handle_enable(filename);
+        } catch (std::system_error& err) {
+            std::cerr << "Error enabling instrumentation: " << err.code().message() << "\n";
+            success = false;
         }
     }
+    return success;
+}
 
-    std::string process_name = panda_parse_string_opt(args.get(), "process_name", "", "the process to collect coverage from");
+bool disable_instrumentation(void) {
+    bool success = true;
+    for (auto del : monitor_delegates) {
+        try {
+            del->handle_disable();
+        } catch (std::system_error& err) {
+            std::cerr << "Error disabling instrumentation: " << err.code().message() << "\n";
+            success = false;
+        }
+    }
+    return success;
+}
 
-    std::string privilege = panda_parse_string_opt(args.get(), "privilege", "all", "collect coverage for a specific privilege mode" );
-    if ("user" == privilege) {
+bool configure(const char* filename, const char* mode, bool log_all_records,
+            bool start_disabled, const char* process_name, bool pc_filter,
+            target_ulong start_pc, target_ulong end_pc, const char* privilege) {
+    // We take in a bunch of char*s to support C callers, but convert 
+    // to strings immediately
+    std::string filename_s     = filename;
+    std::string mode_s         = mode;
+    std::string process_name_s = process_name;
+    std::string privilege_s    = privilege;
+
+    if (inst_del != nullptr) {
+        inst_del.reset();
+    }
+
+    PredicateBuilder pb;
+    ModeBuilder mb(monitor_delegates);
+
+    if (pc_filter) {
+        if (end_pc < start_pc) {
+            log_message("End PC must be smaller than Start PC.");
+            return false;
+        }
+        pb.with_pc_range(start_pc, end_pc);
+    }
+
+    if ("user" == privilege_s) {
         log_message("Privilege Filter = user mode");
         pb.in_kernel(false);
-    } else if ("kernel" == privilege) {
+    } else if ("kernel" == privilege_s) {
         log_message("Privilege Filter = kernel mode");
         pb.in_kernel(true);
-    } else if ("all" != privilege) {
+    } else if ("all" != privilege_s) {
         log_message("Privilege filter must be be user, kernel, or all.");
         return false;
     }
 
     predicate = pb.build();
 
-    panda_cb pcb;
-
-    pcb.before_tcg_codegen = before_tcg_codegen;
-    panda_register_callback(self, PANDA_CB_BEFORE_TCG_CODEGEN, pcb);
-
-    bool start_disabled = panda_parse_bool_opt(args.get(), "start_disabled",
-            "start the plugin with instrumentation disabled");
-    log_message("start disabled %s", PANDA_FLAG_STATUS(start_disabled));
-
-    std::string filename = panda_parse_string_opt(args.get(), "filename",
-        DEFAULT_FILE, "the filename to use for output");
-    log_message("output file name %s", filename.c_str());
-
-    std::string mode_arg = panda_parse_string_opt(args.get(), "mode",
-        "asid-block", "coverage mode");
-
-    bool log_all_records = panda_parse_bool_opt(args.get(), "full",
-            "log all records instead of just uniquely identified ones");
-    log_message("log all records %s", PANDA_FLAG_STATUS(log_all_records));
-
-    ModeBuilder mb(monitor_delegates);
-
-    if ("" != process_name) {
-        log_message("Process Name Filter = %s", process_name.c_str());
-        mb.with_process_name_filter(process_name);
+    if ("" != process_name_s) {
+        log_message("Process Name Filter = %s", process_name);
+        mb.with_process_name_filter(process_name_s);
     }
 
-    mb.with_filename(filename);
-    mb.with_mode(mode_arg);
+    mb.with_filename(filename_s);
+    mb.with_mode(mode_s);
     if (!log_all_records) {
         mb.with_unique_filter();
     }
@@ -220,6 +167,136 @@ bool init_plugin(void *self)
                   << err.code().message() << "\n";
         return false;
     }
+    return true;
+}
+
+bool reset(void) {
+    if (inst_del != nullptr) {
+        inst_del.reset();
+        return true;
+    }
+    return false;
+
+}
+// API END
+}
+
+
+static void after_loadvm(CPUState *cpu)
+{
+    notify_task_change_observers(cpu);
+}
+
+static void before_tcg_codegen(CPUState *cpu, TranslationBlock *tb)
+{
+    // Determine if we should instrument.
+    if (nullptr == inst_del || !predicate->eval(cpu, tb)) {
+        return;
+    }
+    // Instrument!
+    inst_del->instrument(cpu, tb);
+}
+
+
+int monitor_callback(Monitor *mon, const char *cmd_cstr)
+{
+    std::string cmd = cmd_cstr;
+    if (0 == cmd.find(MONITOR_DISABLE)) {
+        log_message("Disabling instrumentation.");
+        disable_instrumentation();
+    } else if (0 == cmd.find(MONITOR_ENABLE)) {
+        auto index = cmd.find("=");
+        std::string filename = DEFAULT_FILE;
+        if (std::string::npos != index) {
+            filename = cmd.substr(index+1);
+            log_message("Enabling instrumentation with filename: %s",
+                filename.c_str());
+        } else {
+            log_message("Enabling instrumentation with default filename: %s",
+                filename.c_str());
+        }
+        enable_instrumentation(filename.c_str());
+    }
+    return 0;
+}
+
+bool init_plugin(void *self)
+{
+
+    std::unique_ptr<panda_arg_list, void(*)(panda_arg_list*)> args(
+        panda_get_args("coverage"), panda_free_args);
+
+    // unset returns 0
+    bool api_mode = panda_parse_bool_opt(args.get(), "api_mode",
+            "do not initalize plugin at all. Must later be configured via API");
+    printf("API MODE: %d\n", api_mode);
+    if (api_mode) {
+        // Configure with placeholder defaults
+        if (!configure("/dev/null", "osi-block", false,
+                    true, "none", true, 0, 0, "kernel")) {
+            log_message("Could not initialize plugin for API mode");
+            return false;
+        }
+        log_message("Initialized for API mode\n");
+    } else { // non-API mode
+        // Parse PC range argument.
+        std::string pc_arg = panda_parse_string_opt(args.get(), "pc", "",
+            "program counter range");
+        
+        target_ulong start_pc = 0;
+        target_ulong end_pc = 0;
+        bool pc_filter = false;
+
+        if ("" != pc_arg) {
+            auto dash_idx = pc_arg.find("-");
+            if (std::string::npos == dash_idx) {
+                log_message("Could not parse \"pc\" argument. Format: <Start PC>-<End PC>");
+                return false;
+            }
+            try {
+                start_pc = try_parse<target_ulong>(pc_arg.substr(0, dash_idx));
+                end_pc = try_parse<target_ulong>(pc_arg.substr(dash_idx + 1));
+                log_message("PC Range Filter = [" TARGET_FMT_lx ", " TARGET_FMT_lx "]", start_pc, end_pc);
+            } catch (std::invalid_argument& e) {
+                log_message("Could not parse PC Range argument: %s", pc_arg.c_str());
+                return false;
+            } catch (std::overflow_error& e) {
+                log_message("PC range outside of valid address space for target.");
+                return false;
+            }
+        }
+
+        std::string process_name = panda_parse_string_opt(args.get(), "process_name", "", "the process to collect coverage from");
+
+        std::string privilege = panda_parse_string_opt(args.get(), "privilege", "all", "collect coverage for a specific privilege mode" );
+
+        bool start_disabled = panda_parse_bool_opt(args.get(), "start_disabled",
+                "start the plugin with instrumentation disabled");
+        log_message("start disabled %s", PANDA_FLAG_STATUS(start_disabled));
+
+        std::string filename = panda_parse_string_opt(args.get(), "filename",
+            DEFAULT_FILE, "the filename to use for output");
+        log_message("output file name %s", filename.c_str());
+
+        std::string mode_arg = panda_parse_string_opt(args.get(), "mode",
+            "asid-block", "coverage mode");
+
+        bool log_all_records = panda_parse_bool_opt(args.get(), "full",
+                "log all records instead of just uniquely identified ones");
+        log_message("log all records %s", PANDA_FLAG_STATUS(log_all_records));
+
+        if (!configure(filename.c_str(), mode_arg.c_str(), log_all_records,
+                    start_disabled, process_name.c_str(), pc_filter, start_pc, end_pc,
+                    privilege.c_str())) {
+            return false;
+        }
+    }
+
+    panda_cb pcb;
+
+    pcb.before_tcg_codegen = before_tcg_codegen;
+    panda_register_callback(self, PANDA_CB_BEFORE_TCG_CODEGEN, pcb);
+
 
     pcb.monitor = monitor_callback;
     panda_register_callback(self, PANDA_CB_MONITOR, pcb);
