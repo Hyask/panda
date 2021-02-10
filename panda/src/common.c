@@ -248,7 +248,7 @@ bool enter_priv(CPUState* cpu) {
 
     if (env->aarch64) {
         saved_pstate = env->pstate;
-        env->pstate |= 3<<2; // Set bits 2-4 to 3 - EL3 aka highest permissions
+        env->pstate |= 1<<2; // Set bits 2-4 to 1 - EL1
         if (saved_pstate == env->pstate) {
             return false;
         }
